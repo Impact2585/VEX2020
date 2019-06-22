@@ -28,12 +28,12 @@ bool pres=false;
 
 void moveIntake(bool dir){
   if(dir){
-    intake_L.move_velocity(-127);
-    intake_R.move_velocity(127);
+    intake_L.move_velocity(-126);
+    intake_R.move_velocity(126);
   }
   else{
-    intake_L.move_velocity(127);
-    intake_R.move_velocity(-127);
+    intake_L.move_velocity(126);
+    intake_R.move_velocity(-126);
   }
 }
 void stopIntake(){
@@ -58,7 +58,7 @@ void lift(int level){
   enc.reset();
   while(enc.get()<=1800*currot){
     //printf("tick: %d\n",enc.get());
-    lift_motor.move_velocity(127);
+    lift_motor.move_velocity(126);
   }
   lift_motor.move_velocity(0);
 }
@@ -110,7 +110,12 @@ void opcontrol() {
       pres=false;
     }
     if(master.get_digital(DIGITAL_UP)){
-      outtake_macro();
+      outtake.move(127);
+      //outtake_macro();
+    }
+    if(master.get_digital(DIGITAL_DOWN)){
+      outtake.move(127);
+      //outtake_macro();
     }
     pros::delay(2);
   }
