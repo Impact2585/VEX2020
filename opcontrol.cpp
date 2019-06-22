@@ -46,7 +46,7 @@ void outtake_macro(){
   enc.reset();
   while(enc.get()<=1800*numrot){
     printf("tick: %d\n",enc.get());
-    outtake.move_velocity(127);
+    outtake.move_velocity(126);
   }
   outtake.move_velocity(0);
 }
@@ -67,7 +67,11 @@ void opcontrol() {
   pros::Controller master (CONTROLLER_MASTER);
 
   while (true) {
-    outtake.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    outtake.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);    
+    left_wheels.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    right_wheels.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    left_wheels_2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    right_wheels_2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     lift_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     char const* currlevelStr =(std::to_string(currlevel)).c_str(); //doesntwork
     printf("level: %s\n",currlevelStr);//doesntwork
@@ -110,11 +114,11 @@ void opcontrol() {
       pres=false;
     }
     if(master.get_digital(DIGITAL_UP)){
-      outtake.move(127);
+      outtake.move_velocity(126);
       //outtake_macro();
     }
     if(master.get_digital(DIGITAL_DOWN)){
-      outtake.move(127);
+      outtake.move_velocity(-126);
       //outtake_macro();
     }
     pros::delay(2);
