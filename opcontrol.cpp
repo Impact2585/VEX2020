@@ -114,11 +114,11 @@ void opcontrol() {
       pres=false;
     }
     if(master.get_digital(DIGITAL_UP)){
-      outtake.move_velocity(60);
+      outtake.move_velocity(20);
       //outtake_macro();
     }
     else if(master.get_digital(DIGITAL_DOWN)){
-      outtake.move_velocity(-60);
+      outtake.move_velocity(-20);
       //outtake_macro();
     }
     else{
