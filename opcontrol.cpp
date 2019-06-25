@@ -132,7 +132,7 @@ void opcontrol() {
       moveOuttake(false);
     }
     else{
-      stopOuttake
+      stopOuttake();
     }
     pros::delay(2);
   }
