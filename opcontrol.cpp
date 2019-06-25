@@ -48,7 +48,7 @@ void stopIntake(){
   intake_L.move(0);
   intake_R.move(0);
 }
-void stopIntake(){
+void stopOuttake(){
   outake.move(0);
 }
 void outtake_macro(){
