@@ -28,17 +28,28 @@ bool pres=false;
 
 void moveIntake(bool dir){
   if(dir){
-    intake_L.move_velocity(-126);
-    intake_R.move_velocity(126);
+    intake_L.move(-126);
+    intake_R.move(126);
   }
   else{
-    intake_L.move_velocity(126);
-    intake_R.move_velocity(-126);
+    intake_L.move(126);
+    intake_R.move(-126);
+  }
+}
+void moveOuttake(bool dir){
+  if(dir){
+    outtake.move(126);
+  }
+  else{
+    outtake.move(-126)
   }
 }
 void stopIntake(){
-  intake_L.move_velocity(0);
-  intake_R.move_velocity(0);
+  intake_L.move(0);
+  intake_R.move(0);
+}
+void stopIntake(){
+  outake.move_
 }
 void outtake_macro(){
   int numrot= 10;
@@ -46,9 +57,9 @@ void outtake_macro(){
   enc.reset();
   while(enc.get()<=1800*numrot){
     printf("tick: %d\n",enc.get());
-    outtake.move_velocity(126);
+    outtake.move(126);
   }
-  outtake.move_velocity(0);
+  outtake.move(0);
 }
 void lift(int level){
   double heights[5] = {0,18.83,24.66,37.91};
@@ -58,9 +69,9 @@ void lift(int level){
   enc.reset();
   while(enc.get()<=1800*currot){
     //printf("tick: %d\n",enc.get());
-    lift_motor.move_velocity(126);
+    lift_motor.move(126);
   }
-  lift_motor.move_velocity(0);
+  lift_motor.move(0);
 }
 void opcontrol() {
 
@@ -114,15 +125,14 @@ void opcontrol() {
       pres=false;
     }
     if(master.get_digital(DIGITAL_UP)){
-      outtake.move_velocity(20);
+      moveOuttake(true);
       //outtake_macro();
     }
     else if(master.get_digital(DIGITAL_DOWN)){
-      outtake.move_velocity(-20);
-      //outtake_macro();
+      moveOuttake(false);
     }
     else{
-      outtake.move_velocity(0);
+      stopOuttake
     }
     pros::delay(2);
   }
