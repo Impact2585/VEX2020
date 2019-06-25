@@ -19,10 +19,10 @@ pros::Motor left_wheels (LEFT_WHEELS_PORT);
 pros::Motor left_wheels_2 (LEFT_WHEELS_PORT_2,true);
 pros::Motor right_wheels (RIGHT_WHEELS_PORT, true);
 pros::Motor right_wheels_2 (RIGHT_WHEELS_PORT_2);
-pros::Motor intake_L (INTAKE_PORT_L,MOTOR_GEARSET_36);
-pros::Motor intake_R (INTAKE_PORT_R,MOTOR_GEARSET_36);
+pros::Motor intake_L (INTAKE_PORT_L);
+pros::Motor intake_R (INTAKE_PORT_R);
 pros::Motor lift_motor (LIFT_PORT,MOTOR_GEARSET_36);
-pros::Motor outtake (OUTTAKE_PORT, MOTOR_GEARSET_36, false, pros::E_MOTOR_ENCODER_COUNTS);
+pros::Motor outtake (OUTTAKE_PORT, E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_COUNTS);
 
 bool pres=false;
 
