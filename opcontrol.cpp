@@ -38,10 +38,10 @@ void moveIntake(bool dir){
 }
 void moveOuttake(bool dir){
   if(dir){
-    outtake.move(126);
+    outtake.move(61);
   }
   else{
-    outtake.move(-126)
+    outtake.move(-61)
   }
 }
 void stopIntake(){
@@ -49,7 +49,7 @@ void stopIntake(){
   intake_R.move(0);
 }
 void stopIntake(){
-  outake.move_
+  outake.move(0);
 }
 void outtake_macro(){
   int numrot= 10;
