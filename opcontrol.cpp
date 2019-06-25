@@ -117,9 +117,12 @@ void opcontrol() {
       outtake.move_velocity(126);
       //outtake_macro();
     }
-    if(master.get_digital(DIGITAL_DOWN)){
+    else if(master.get_digital(DIGITAL_DOWN)){
       outtake.move_velocity(-126);
       //outtake_macro();
+    }
+    else{
+      outtake.move_velocity(0);
     }
     pros::delay(2);
   }
