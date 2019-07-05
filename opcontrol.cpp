@@ -36,7 +36,7 @@ double SPEED_SLOW=60/127;
 int INTAKE_SPEED=126;
 int INTAKE_NEGATIVE_SPEED=61;
 int OUTTAKE_ENCODER_TICKS=4650;//???
-int OUTTAKE_SPEED=86;//????
+int OUTTAKE_SPEED=126;//????
 
 void moveIntake(bool dir){//false for reverse
   if(dir){
