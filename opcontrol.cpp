@@ -31,6 +31,8 @@ std::vector<int> intake_motor_movement_log={};
 
 //various numbers
 double SPEED_COEFFICIENT=126/127;
+double SPEED_FAST=126/127;
+double SPEED_SLOW=60/127;
 int INTAKE_SPEED=126;
 int INTAKE_NEGATIVE_SPEED=61;
 int OUTTAKE_ENCODER_TICKS=4650;//???
@@ -97,11 +99,11 @@ void opcontrol() {
     left_motor_movement_log.push_back(left);
     right_motor_movement_log.push_back(right);
     //SLOW MODE CONTROL
-    if (master.get_digital(DIGITAL_A)&&SPEED_COEFFICIENT==126/127) {
-      SPEED_COEFFICIENT=60/127;
+    if (master.get_digital(DIGITAL_L1)&&SPEED_COEFFICIENT==126/127) {
+      SPEED_COEFFICIENT=SPEED_SLOW;
     }
-    else if (master.get_digital(DIGITAL_A)) {
-      SPEED_COEFFICIENT=126/127;//i hear that 126 > 127
+    else if (master.get_digital(DIGITAL_L1)) {
+      SPEED_COEFFICIENT=SPEED_FAST;//i hear that 126 > 127
     }
     //INTAKE CONTROL
     if (master.get_digital(DIGITAL_R1)) {
