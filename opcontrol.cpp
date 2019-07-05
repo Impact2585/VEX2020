@@ -32,7 +32,7 @@ std::vector<int> intake_motor_movement_log={};
 //various numbers
 double SPEED_COEFFICIENT=126/127;
 double SPEED_FAST=126/127;
-double SPEED_SLOW=60/127;
+double SPEED_SLOW=76/127;
 int INTAKE_SPEED=126;
 int INTAKE_NEGATIVE_SPEED=61;
 int OUTTAKE_ENCODER_TICKS=4650;//???
