@@ -11,88 +11,99 @@ using namespace okapi;
 #define INTAKE_PORT_L 4
 #define INTAKE_PORT_R 5
 #define OUTTAKE_PORT 3
-#define LIFT_PORT 15
+#define OUTTAKE_PORT_2 11
 
-int currlevel=0;
-
+//ports
 pros::Motor left_wheels (LEFT_WHEELS_PORT);
 pros::Motor left_wheels_2 (LEFT_WHEELS_PORT_2,true);
 pros::Motor right_wheels (RIGHT_WHEELS_PORT, true);
 pros::Motor right_wheels_2 (RIGHT_WHEELS_PORT_2);
 pros::Motor intake_L (INTAKE_PORT_L);
 pros::Motor intake_R (INTAKE_PORT_R);
-pros::Motor lift_motor (LIFT_PORT,MOTOR_GEARSET_36);
-pros::Motor outtake (OUTTAKE_PORT, E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_COUNTS);
+pros::Motor outtake_2 (OUTTAKE_PORT_2,MOTOR_GEARSET_36, false, pros::E_MOTOR_ENCODER_COUNTS);
+pros::Motor outtake (OUTTAKE_PORT,MOTOR_GEARSET_36, false, pros::E_MOTOR_ENCODER_COUNTS);
 
-bool pres=false;
+//budget motion profiling???
+std::vector<int> right_motor_movement_log={};
+std::vector<int> left_motor_movement_log={};
+std::vector<int> outtake_motor_movement_log={};
+std::vector<int> intake_motor_movement_log={};
 
-void moveIntake(bool dir){
+//various numbers
+double SPEED_COEFFICIENT=126/127;
+int INTAKE_SPEED=126;
+int INTAKE_NEGATIVE_SPEED=61;
+int OUTTAKE_ENCODER_TICKS=4650;//???
+int OUTTAKE_SPEED=86;//????
+
+void moveIntake(bool dir){//false for reverse
   if(dir){
-    intake_L.move(-126);
-    intake_R.move(126);
+    intake_L.move(-INTAKE_SPEED);
+    intake_R.move(INTAKE_SPEED);
+    intake_motor_movement_log.push_back(INTAKE_SPEED);
   }
   else{
-    intake_L.move(126);
-    intake_R.move(-126);
-  }
-}
-void moveOuttake(bool dir){
-  if(dir){
-    outtake.move(61);
-  }
-  else{
-    outtake.move(-61)
+    intake_L.move(INTAKE_NEGATIVE_SPEED);
+    intake_R.move(-INTAKE_NEGATIVE_SPEED);
+    intake_motor_movement_log.push_back(-INTAKE_NEGATIVE_SPEED);
   }
 }
 void stopIntake(){
   intake_L.move(0);
   intake_R.move(0);
+  intake_motor_movement_log.push_back(0);
 }
 void stopOuttake(){
-  outake.move(0);
+  outtake.move(0);
+  outtake_motor_movement_log.push_back(0);
 }
-void outtake_macro(){
-  int numrot= 10;
+void outtake_macro(bool dir){//false for reverse
   IntegratedEncoder enc = IntegratedEncoder(outtake);
   enc.reset();
-  while(enc.get()<=1800*numrot){
-    printf("tick: %d\n",enc.get());
-    outtake.move(126);
+  if(dir){
+    while(enc.get()<=OUTTAKE_ENCODER_TICKS){
+      outtake.move(OUTTAKE_SPEED);
+      outtake_2.move(-OUTTAKE_SPEED);
+      outtake_motor_movement_log.push_back(OUTTAKE_SPEED);
+    }
+  }
+  else{
+    while(enc.get()>=-OUTTAKE_ENCODER_TICKS){
+      outtake.move(-OUTTAKE_SPEED);
+      outtake_2.move(OUTTAKE_SPEED);
+      outtake_motor_movement_log.push_back(-OUTTAKE_SPEED);
+    }
   }
   outtake.move(0);
 }
-void lift(int level){
-  double heights[5] = {0,18.83,24.66,37.91};
-  double conv = 5;
-  int currot = (heights[level]-heights[currlevel])/conv;
-  IntegratedEncoder enc = IntegratedEncoder(outtake);
-  enc.reset();
-  while(enc.get()<=1800*currot){
-    //printf("tick: %d\n",enc.get());
-    lift_motor.move(126);
-  }
-  lift_motor.move(0);
-}
 void opcontrol() {
-
   pros::Controller master (CONTROLLER_MASTER);
 
+  outtake.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  intake_R.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  intake_L.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  left_wheels.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  right_wheels.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  left_wheels_2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  right_wheels_2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
   while (true) {
-    outtake.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);    
-    left_wheels.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-    right_wheels.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-    left_wheels_2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-    right_wheels_2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-    lift_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-    char const* currlevelStr =(std::to_string(currlevel)).c_str(); //doesntwork
-    printf("level: %s\n",currlevelStr);//doesntwork
-    master.set_text(1, 2,currlevelStr);//doesntwork
-		int left=master.get_analog(ANALOG_LEFT_Y);
-		int right=master.get_analog(ANALOG_RIGHT_Y);
+    //DRIVE (TANK)
+    int left=(int)(master.get_analog(ANALOG_LEFT_Y)*SPEED_COEFFICIENT);
+    int right=(int)(master.get_analog(ANALOG_RIGHT_Y)*SPEED_COEFFICIENT);
     left_wheels.move(left);
     right_wheels.move(right);
     left_wheels_2.move(left);
     right_wheels_2.move(right);
+    left_motor_movement_log.push_back(left);
+    right_motor_movement_log.push_back(right);
+    //SLOW MODE CONTROL
+    if (master.get_digital(DIGITAL_A)&&SPEED_COEFFICIENT==126/127) {
+      SPEED_COEFFICIENT=60/127;
+    }
+    else if (master.get_digital(DIGITAL_A)) {
+      SPEED_COEFFICIENT=126/127;//i hear that 126 > 127
+    }
+    //INTAKE CONTROL
     if (master.get_digital(DIGITAL_R1)) {
       moveIntake(true);
     }
@@ -102,38 +113,19 @@ void opcontrol() {
     else {
       stopIntake();
     }
-    //printf("level: %d %d\n",currlevel,pres);
-    if(master.get_digital(DIGITAL_L1)&&!pres){
-      printf("level: %d %d\n",currlevel,pres);
-      pres=true;
-      currlevel++;
-      if(currlevel==5){
-        currlevel=0;
-      }
-      //lift(currlevel);
+    //OUTTAKE SYSTEM
+    IntegratedEncoder enc = IntegratedEncoder(outtake);
+    if(master.get_digital(DIGITAL_X)){
+      //moveOuttake(true);//controlled outtake
+      outtake_macro(true);
     }
-    else if(master.get_digital(DIGITAL_L2)&&!pres){
-      pres=true;
-      printf("level: %d %d\n",currlevel,pres);
-      currlevel--;
-      if(currlevel==-1){
-        currlevel=4;
-      }
-      //lift(currlevel);
-    }
-    else if(master.get_digital(DIGITAL_L1)+master.get_digital(DIGITAL_L2)==0){
-      pres=false;
-    }
-    if(master.get_digital(DIGITAL_UP)){
-      moveOuttake(true);
-      //outtake_macro();
-    }
-    else if(master.get_digital(DIGITAL_DOWN)){
-      moveOuttake(false);
+    else if(master.get_digital(DIGITAL_UP)){
+      //moveOuttake(false);
+      outtake_macro(false);
     }
     else{
       stopOuttake();
     }
-    pros::delay(2);
+    pros::delay(5);
   }
 }
