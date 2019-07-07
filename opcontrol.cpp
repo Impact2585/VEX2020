@@ -104,7 +104,7 @@ void opcontrol() {
       left_motor_movement_log.push_back(left);
       right_motor_movement_log.push_back(right);
       //SLOW MODE CONTROL
-      if (master.get_digital(DIGITAL_L1)&&SPEED_COEFFICIENT==126/127) {
+      if (master.get_digital(DIGITAL_L1)&&SPEED_COEFFICIENT==SPEED_FAST) {
         SPEED_COEFFICIENT=SPEED_SLOW;
       }
       else if (master.get_digital(DIGITAL_L1)) {
