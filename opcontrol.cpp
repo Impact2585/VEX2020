@@ -13,6 +13,9 @@ using namespace okapi;
 #define OUTTAKE_PORT 3
 #define OUTTAKE_PORT_2 11
 
+//testing something
+boolean onoff = false;
+
 //ports
 pros::Motor left_wheels (LEFT_WHEELS_PORT);
 pros::Motor left_wheels_2 (LEFT_WHEELS_PORT_2,true);
@@ -79,6 +82,7 @@ void outtake_macro(bool dir){//false for reverse
   outtake.move(0);
 }
 void opcontrol() {
+  int tick = 0;
   pros::Controller master (CONTROLLER_MASTER);
 
   outtake.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
@@ -90,43 +94,59 @@ void opcontrol() {
   right_wheels_2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
   while (true) {
     //DRIVE (TANK)
-    int left=(int)(master.get_analog(ANALOG_LEFT_Y)*SPEED_COEFFICIENT);
-    int right=(int)(master.get_analog(ANALOG_RIGHT_Y)*SPEED_COEFFICIENT);
-    left_wheels.move(left);
-    right_wheels.move(right);
-    left_wheels_2.move(left);
-    right_wheels_2.move(right);
-    left_motor_movement_log.push_back(left);
-    right_motor_movement_log.push_back(right);
-    //SLOW MODE CONTROL
-    if (master.get_digital(DIGITAL_L1)&&SPEED_COEFFICIENT==126/127) {
-      SPEED_COEFFICIENT=SPEED_SLOW;
+    if(!on){
+      int left=(int)(master.get_analog(ANALOG_LEFT_Y)*SPEED_COEFFICIENT);
+      int right=(int)(master.get_analog(ANALOG_RIGHT_Y)*SPEED_COEFFICIENT);
+      left_wheels.move(left);
+      right_wheels.move(right);
+      left_wheels_2.move(left);
+      right_wheels_2.move(right);
+      left_motor_movement_log.push_back(left);
+      right_motor_movement_log.push_back(right);
+      //SLOW MODE CONTROL
+      if (master.get_digital(DIGITAL_L1)&&SPEED_COEFFICIENT==126/127) {
+        SPEED_COEFFICIENT=SPEED_SLOW;
+      }
+      else if (master.get_digital(DIGITAL_L1)) {
+        SPEED_COEFFICIENT=SPEED_FAST;//i hear that 126 > 127
+      }
+      //INTAKE CONTROL
+      if (master.get_digital(DIGITAL_R1)) {
+        moveIntake(true);
+      }
+      else if (master.get_digital(DIGITAL_R2)) {
+        moveIntake(false);
+      }
+      else {
+        stopIntake();
+      }
+      //OUTTAKE SYSTEM
+      IntegratedEncoder enc = IntegratedEncoder(outtake);
+      if(master.get_digital(DIGITAL_X)){
+        //moveOuttake(true);//controlled outtake
+        outtake_macro(true);
+      }
+      else if(master.get_digital(DIGITAL_UP)){
+        //moveOuttake(false);
+        outtake_macro(false);
+      }
+      else{
+        stopOuttake();
+      }
     }
-    else if (master.get_digital(DIGITAL_L1)) {
-      SPEED_COEFFICIENT=SPEED_FAST;//i hear that 126 > 127
+    else if(i<left_motor_movement_log.size()){
+      left_wheels.move(left_motor_movement_log[i]);
+      right_wheels.move(right_motor_movement_log[i]);
+      left_wheels_2.move(left_motor_movement_log[i]);
+      right_wheels_2.move(right_motor_movement_log[i]);
+      intake_L.move(-intake_motor_movement_log[i]);
+      intake_R.move(intake_motor_movement_log[i]);
+      outtake.move(outtake_motor_movement_log[i]);
+      outtake_2.move(-outtake_motor_movement_log[i]);
+      i++;
     }
-    //INTAKE CONTROL
-    if (master.get_digital(DIGITAL_R1)) {
-      moveIntake(true);
-    }
-    else if (master.get_digital(DIGITAL_R2)) {
-      moveIntake(false);
-    }
-    else {
-      stopIntake();
-    }
-    //OUTTAKE SYSTEM
-    IntegratedEncoder enc = IntegratedEncoder(outtake);
-    if(master.get_digital(DIGITAL_X)){
-      //moveOuttake(true);//controlled outtake
-      outtake_macro(true);
-    }
-    else if(master.get_digital(DIGITAL_UP)){
-      //moveOuttake(false);
-      outtake_macro(false);
-    }
-    else{
-      stopOuttake();
+    else if (master.get_digital(DIGITAL_Y)) {
+      onoff^=1;
     }
     pros::delay(5);
   }
