@@ -134,16 +134,16 @@ void opcontrol() {
         stopOuttake();
       }
     }
-    else if(i<left_motor_movement_log.size()){
-      left_wheels.move(left_motor_movement_log[i]);
-      right_wheels.move(right_motor_movement_log[i]);
-      left_wheels_2.move(left_motor_movement_log[i]);
-      right_wheels_2.move(right_motor_movement_log[i]);
-      intake_L.move(-intake_motor_movement_log[i]);
-      intake_R.move(intake_motor_movement_log[i]);
-      outtake.move(outtake_motor_movement_log[i]);
-      outtake_2.move(-outtake_motor_movement_log[i]);
-      i++;
+    else if(tick<left_motor_movement_log.size()){
+      left_wheels.move(left_motor_movement_log[tick]);
+      right_wheels.move(right_motor_movement_log[tick]);
+      left_wheels_2.move(left_motor_movement_log[tick]);
+      right_wheels_2.move(right_motor_movement_log[tick]);
+      intake_L.move(-intake_motor_movement_log[tick]);
+      intake_R.move(intake_motor_movement_log[tick]);
+      outtake.move(outtake_motor_movement_log[tick]);
+      outtake_2.move(-outtake_motor_movement_log[tick]);
+      tick++;
     }
     else if (master.get_digital(DIGITAL_Y)) {
       onoff^=1;
