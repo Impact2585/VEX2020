@@ -94,7 +94,7 @@ void opcontrol() {
   right_wheels_2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
   while (true) {
     //DRIVE (TANK)
-    if(!on){
+    if(!onoff){
       int left=(int)(master.get_analog(ANALOG_LEFT_Y)*SPEED_COEFFICIENT);
       int right=(int)(master.get_analog(ANALOG_RIGHT_Y)*SPEED_COEFFICIENT);
       left_wheels.move(left);
