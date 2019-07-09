@@ -14,7 +14,7 @@ using namespace okapi;
 #define OUTTAKE_PORT_2 11
  
 //testing something
-bool onoff = false;
+bool profiling = false;
  
 //ports/encoders
 pros::Motor left_wheels (LEFT_WHEELS_PORT);
@@ -40,7 +40,22 @@ float SPEED_SLOW=0.4;
 int INTAKE_SPEED=126;
 int OUTTAKE_ENCODER_TICKS=5500;//???
 int OUTTAKE_SPEED=126;//????
- 
+
+//motion profiling variables??
+auto myChassis = ChassisControllerFactory::create(
+  {1, -2}, // Left motors
+  {-10, 9},   // Right motors
+  AbstractMotor::gearset::red, // Torque gearset
+  {4_in, 12.5_in} // 4 inch wheels, 12.5 inch wheelbase width
+);
+
+auto profileController = AsyncControllerFactory::motionProfile(
+  3.0,  // Maximum linear velocity of the Chassis in m/s
+  2.0,  // Maximum linear acceleration of the Chassis in m/s/s
+  10.0, // Maximum linear jerk of the Chassis in m/s/s/s
+  myChassis // Chassis Controller
+);
+
 void moveIntake(bool dir){//false for reverse
   if(dir){
     intake_L.move(-INTAKE_SPEED);
@@ -98,31 +113,35 @@ void opcontrol() {
   left_wheels_2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
   right_wheels_2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
   while (true) {
-    DRIVE (TANK)
-    /*float left=(master.get_analog(ANALOG_LEFT_Y)*SPEED_COEFFICIENT);
-    float right=(master.get_analog(ANALOG_RIGHT_Y)*SPEED_COEFFICIENT);
-    left_wheels.move(left);
-    right_wheels.move(right);
-    left_wheels_2.move(left);
-    right_wheels_2.move(right);
-    left_motor_movement_log.push_back(left);
-    right_motor_movement_log.push_back(right);
-    */
-    int power = controller_get_analog(CONTROLLER_MASTER, ANALOG_LEFT_Y);
-    int turn = controller_get_analog(CONTROLLER_MASTER, ANALOG_RIGHT_X);
-    int left = (power + turn)*SPEED_COEFFICIENT;
-    int right = (power - turn)*SPEED_COEFFICIENT;
-    right *= -1; // This reverses the right motor
-    motor_move(LEFT_WHEELS_PORT, left);
-    motor_move(RIGHT_WHEELS_PORT, right);
-    left_motor_movement_log.push_back(left);
-    right_motor_movement_log.push_back(right);
-    //SLOW MODE CONTROL
-    if (master.get_digital(DIGITAL_L1)) {
-      SPEED_COEFFICIENT=SPEED_SLOW;
-    }
-    else  {
-      SPEED_COEFFICIENT=SPEED_FAST;//i hear that 126 > 127
+    if(profiling){}
+    else{
+     //DRIVE (TANK)
+     /*float left=(master.get_analog(ANALOG_LEFT_Y)*SPEED_COEFFICIENT);
+     float right=(master.get_analog(ANALOG_RIGHT_Y)*SPEED_COEFFICIENT);
+     left_wheels.move(left);
+     right_wheels.move(right);
+     left_wheels_2.move(left);
+     right_wheels_2.move(right);
+     left_motor_movement_log.push_back(left);
+     right_motor_movement_log.push_back(right);
+     */
+    //DRIVE (ARCADE)
+     int power = controller_get_analog(CONTROLLER_MASTER, ANALOG_LEFT_Y);
+     int turn = controller_get_analog(CONTROLLER_MASTER, ANALOG_RIGHT_X);
+     int left = (power + turn)*SPEED_COEFFICIENT;
+     int right = (power - turn)*SPEED_COEFFICIENT;
+     right *= -1; // This reverses the right motor
+     motor_move(LEFT_WHEELS_PORT, left);
+     motor_move(RIGHT_WHEELS_PORT, right);
+     left_motor_movement_log.push_back(left);
+     right_motor_movement_log.push_back(right);
+     //SLOW MODE CONTROL
+     if (master.get_digital(DIGITAL_L1)) {
+       SPEED_COEFFICIENT=SPEED_SLOW;
+     }
+     else  {
+       SPEED_COEFFICIENT=SPEED_FAST;//i hear that 126 > 127
+     }
     }
     //INTAKE CONTROL
     if (master.get_digital(DIGITAL_R1)) {
