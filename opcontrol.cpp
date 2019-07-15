@@ -1,5 +1,6 @@
 #include "main.h"
 #include <stdio.h>
+#include <string>
 #include "okapi/api.hpp"
  
 using namespace okapi;
@@ -13,7 +14,6 @@ using namespace okapi;
 #define OUTTAKE_PORT 3
 #define OUTTAKE_PORT_2 11
 #define VISION_PORT 20
- 
 //testing something
 bool profiling = false;
  
@@ -26,7 +26,7 @@ pros::Motor intake_L (INTAKE_PORT_L);
 pros::Motor intake_R (INTAKE_PORT_R);
 pros::Motor outtake_2 (OUTTAKE_PORT_2,MOTOR_GEARSET_36, false, pros::E_MOTOR_ENCODER_COUNTS);
 pros::Motor outtake (OUTTAKE_PORT,MOTOR_GEARSET_36, false, pros::E_MOTOR_ENCODER_COUNTS);
- 
+IntegratedEncoder enc = IntegratedEncoder(outtake);
  
 //budget motion profiling???
 std::vector<int> right_motor_movement_log={};
@@ -270,26 +270,44 @@ void opcontrol() {
     if(master.get_digital(DIGITAL_X)){
       //outtake_macro(true);
       moveOuttake(true);//controlled outtake
-      state=1;
     }
     else if(master.get_digital(DIGITAL_UP)){
       //outtake_macro(true);
       moveOuttake(false);
-      state=0;
     }
     else{
      stopOuttake();
     }
-    if(master.get_digital(DIGITAL_Y)&&tick<left_motor_movement_log.size()){
-      left_wheels.move(left_motor_movement_log[tick]);
-      right_wheels.move(right_motor_movement_log[tick]);
-      left_wheels_2.move(left_motor_movement_log[tick]);
-      right_wheels_2.move(right_motor_movement_log[tick]);
-      intake_L.move(-intake_motor_movement_log[tick]);
-      intake_R.move(intake_motor_movement_log[tick]);
-      outtake.move(outtake_motor_movement_log[tick]);
-      outtake_2.move(-outtake_motor_movement_log[tick]);
-      tick++;
+    bool writtofile=false;
+    if(master.get_digital(DIGITAL_Y)&&!writtofile){
+      FILE* left = fopen("/usd/left.txt", "w");
+      fputs("{", left);
+      for(int i:left_motor_movement_log){
+        fprintf(left,"%d, ",i);
+      }
+      fputs("}", left);
+      fclose(left);FILE* right = fopen("/usd/right.txt", "w");
+      fputs("{", right);
+      for(int i:right_motor_movement_log){
+        fprintf(right,"%d, ",i);
+      }
+      fputs("}", right);
+      fclose(right);
+      FILE* out = fopen("/usd/out.txt", "w");
+      fputs("{", out);
+      for(int i:outtake_motor_movement_log){
+        fprintf(out,"%d, ",i);
+      }
+      fputs("}", out);
+      fclose(out);
+      FILE* inta = fopen("/usd/inta.txt", "w");
+      fputs("{", inta);
+      for(int i:intake_motor_movement_log){
+        fprintf(inta,"%d, ",i);
+      }
+      fputs("}", inta);
+      fclose(inta);
+      writtofile=true;
     }
     pros::delay(10);
 }
