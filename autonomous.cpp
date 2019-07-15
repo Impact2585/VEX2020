@@ -1,7 +1,7 @@
 #include "main.h"
 #include <stdio.h>
 #include "okapi/api.hpp"
- 
+
 using namespace okapi;
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -14,8 +14,13 @@ using namespace okapi;
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-bool blue=false;
-bool front =true;
+ std::vector<int> a = {};
+ std::vector<int> b = {};
+ std::vector<int> c = {};
+ std::vector<int> d = {};
+  bool blue=false;
+  bool front =true;
+  bool skills=true;
  pros::Motor intake (4);
  pros::Motor intake2 (5);
  auto chassis = ChassisControllerFactory::create(
@@ -29,7 +34,7 @@ auto profileController1 = AsyncControllerFactory::motionProfile(
   10.0, // Maximum linear jerk of the Chassis in m/s/s/s
   chassis // Chassis Controller
 );
- 
+
 auto profileController2= AsyncControllerFactory::motionProfile(
   4.0,
   4.0,
@@ -37,6 +42,22 @@ auto profileController2= AsyncControllerFactory::motionProfile(
   chassis
 );
 void autonomous() {
+  if(skills){
+    int tick = 0;{
+      while(tick<a.size()){
+        pros::Motor(1).move(a[tick]);
+        pros::Motor(10).move(b[tick]);
+        pros::Motor(2).move(a[tick]);
+        pros::Motor(9).move(b[tick]);
+        pros::Motor(4).move(-c[tick]);
+        pros::Motor(5).move(c[tick]);
+        pros::Motor(3).move(d[tick]);
+        pros::Motor(11).move(-d[tick]);
+        tick++;
+      }
+    }
+  }
+  else{
     int c = 2*blue-1;
     if(front){
         intake.move(126);
@@ -51,7 +72,7 @@ void autonomous() {
         profileController2.waitUntilSettled();
       profileController2.setTarget("intake1",true);
         profileController2.waitUntilSettled();
- 
+
         profileController2.generatePath({
           Point{0_ft, 0_ft, 0_deg},
           Point{0.1_ft, 0_ft, 0_deg}},
@@ -71,7 +92,7 @@ void autonomous() {
       intake2.move(0);
       IntegratedEncoder enc = IntegratedEncoder(pros::Motor(3));//outtake
       enc.reset();
- 
+
       intake.move(0);
       intake2.move(0);
       while(enc.get()<=5500){
@@ -103,7 +124,7 @@ void autonomous() {
         "back1" // Profile name
       );
     profileController2.setTarget("back1",true);
- 
+
     profileController1.generatePath({
       Point{0_ft, 0_ft, 0_deg},
       Point{2.7_ft, 0_ft, 0_deg}},
@@ -123,7 +144,7 @@ void autonomous() {
       "scorezone" // Profile name
     );
     profileController2.setTarget("scorezone");
- 
+
     profileController2.waitUntilSettled();
     pros::Motor(1).move(0);
     pros::Motor(2).move(0);
@@ -131,7 +152,7 @@ void autonomous() {
     pros::Motor(9).move(0);
     IntegratedEncoder enc = IntegratedEncoder(pros::Motor(3));//outtake
     enc.reset();
- 
+
     intake.move(0);
     intake2.move(0);
     while(enc.get()<=5500){
@@ -146,4 +167,5 @@ void autonomous() {
     pros::Motor(10).move(-50);
     pros::Motor(9).move(-50);
   }
+}
 }
