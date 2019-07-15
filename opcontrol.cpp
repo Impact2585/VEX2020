@@ -141,6 +141,18 @@ void stopIntake(){
   intake_R.move(0);
   intake_motor_movement_log.push_back(0);
 }
+void moveOuttake(bool dir){
+ if(dir){
+  outtake.move(OUTTAKE_SPEED);
+  outtake_2.move(-OUTTAKE_SPEED);
+  outtake_motor_movement_log.push_back(OUTTAKE_SPEED);
+ }
+ else{
+  outtake.move(-OUTTAKE_SPEED);
+  outtake_2.move(OUTTAKE_SPEED);
+  outtake_motor_movement_log.push_back(-OUTTAKE_SPEED);
+ }
+}
 void stopOuttake(){
   outtake.move(0);
   outtake_2.move(0);
@@ -256,11 +268,12 @@ void opcontrol() {
     }
     //OUTTAKE SYSTEM
     if(master.get_digital(DIGITAL_X)){
-    outtake_macro(true);
+      outtake_macro(true);
       //moveOuttake(true);//controlled outtake
       state=1;
     }
     else if(master.get_digital(DIGITAL_UP)){
+      outtake_macro(true);
       //moveOuttake(false);
       state=0;
     }
