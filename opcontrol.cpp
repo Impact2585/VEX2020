@@ -268,13 +268,13 @@ void opcontrol() {
     }
     //OUTTAKE SYSTEM
     if(master.get_digital(DIGITAL_X)){
-      outtake_macro(true);
-      //moveOuttake(true);//controlled outtake
+      //outtake_macro(true);
+      moveOuttake(true);//controlled outtake
       state=1;
     }
     else if(master.get_digital(DIGITAL_UP)){
-      outtake_macro(true);
-      //moveOuttake(false);
+      //outtake_macro(true);
+      moveOuttake(false);
       state=0;
     }
     else{
