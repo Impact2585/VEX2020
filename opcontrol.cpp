@@ -12,6 +12,7 @@ using namespace okapi;
 #define INTAKE_PORT_R 5
 #define OUTTAKE_PORT 3
 #define OUTTAKE_PORT_2 11
+#define VISION_PORT 20
  
 //testing something
 bool profiling = false;
@@ -25,7 +26,6 @@ pros::Motor intake_L (INTAKE_PORT_L);
 pros::Motor intake_R (INTAKE_PORT_R);
 pros::Motor outtake_2 (OUTTAKE_PORT_2,MOTOR_GEARSET_36, false, pros::E_MOTOR_ENCODER_COUNTS);
 pros::Motor outtake (OUTTAKE_PORT,MOTOR_GEARSET_36, false, pros::E_MOTOR_ENCODER_COUNTS);
-IntegratedEncoder enc = IntegratedEncoder(outtake);
  
  
 //budget motion profiling???
@@ -44,10 +44,10 @@ int OUTTAKE_SPEED=126;//????
  
 //color codes?
  
-pros::Vision vis (20);
+pros::Vision vis (VISION_PORT);
  
  
-pros::vision_signature_s_t THANUSCUBE = pros::Vision::signature_from_utility(1, 1379, 2243, 1811, 8235, 9945, 9090, 3.000, 1);
+pros::vision_signature_s_t THANOSCUBE = pros::Vision::signature_from_utility(1, 1379, 2243, 1811, 8235, 9945, 9090, 3.000, 1);
 pros::vision_signature_s_t ORANGCUBE = pros::Vision::signature_from_utility(2, 6253, 6967, 6610, -2621, -2185, -2403, 3.000, 0);
 pros::vision_signature_s_t GREENCUBES = pros::Vision::signature_from_utility(3, -8371, -7575, -7973, -4897, -3719, -4308, 3.000, 0);
 pros::vision_signature_s_t PURPLE = pros::Vision::signature_from_utility( 4, 895, 1927, 1411, 8041, 10169, 9105, 3.000, 1);
@@ -191,7 +191,7 @@ void outtake_macro(bool dir){//false for reverse
   outtake_motor_movement_log.push_back(-OUTTAKE_SPEED);
 }
 void opcontrol() {
-  vis.set_signature(1, &THANUSCUBE);
+  vis.set_signature(1, &THANOSCUBE);
   vis.set_signature(2, &GREENCUBES);
   vis.set_signature(3, &ORANGCUBE);
   int tick = 0;
@@ -206,17 +206,15 @@ void opcontrol() {
   left_wheels_2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
   right_wheels_2.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
   while (true) {
-    if(profiling){}
-    else{
      //DRIVE (TANK)
      float left=(master.get_analog(ANALOG_LEFT_Y)*SPEED_COEFFICIENT);
      float right=(master.get_analog(ANALOG_RIGHT_Y)*SPEED_COEFFICIENT);
      if(master.get_digital(DIGITAL_L2)){
-       int stuff = autoAlignCube();
-       if(stuff==-30){
+       int adjust = autoAlignCube();
+       if(adjust==-30){
          right-=30;
        }
-       if(stuff==30){
+       if(adjust==30){
          left-=30;
        }
      }
@@ -257,17 +255,12 @@ void opcontrol() {
       stopIntake();
     }
     //OUTTAKE SYSTEM
-    bool state = false;
-    long encStart =0;
     if(master.get_digital(DIGITAL_X)){
     outtake_macro(true);
-      encStart = enc.get();
       //moveOuttake(true);//controlled outtake
       state=1;
     }
     else if(master.get_digital(DIGITAL_UP)){
-      outtake_macro(false);
-      enc.reset();
       //moveOuttake(false);
       state=0;
     }
@@ -283,5 +276,4 @@ void opcontrol() {
       tick++;
     }
     pros::delay(10);
-  }
 }
