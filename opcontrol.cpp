@@ -277,6 +277,9 @@ void opcontrol() {
       //moveOuttake(false);
       state=0;
     }
+    else{
+     stopOuttake();
+    }
     if(master.get_digital(DIGITAL_Y)&&tick<left_motor_movement_log.size()){
       left_wheels.move(left_motor_movement_log[tick]);
       right_wheels.move(right_motor_movement_log[tick]);
