@@ -95,7 +95,7 @@ void autonomous() {
 
       intake.move(0);
       intake2.move(0);
-      while(enc.get()<=5500){
+      while(enc.get()<=5600){
         pros::Motor(3).move(126);
         pros::Motor(11).move(-126);
       }
@@ -155,7 +155,7 @@ void autonomous() {
 
     intake.move(0);
     intake2.move(0);
-    while(enc.get()<=5500){
+    while(enc.get()<=5600){
       pros::Motor(3).move(126);
       pros::Motor(11).move(-126);
     }
