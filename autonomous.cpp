@@ -136,7 +136,7 @@ void autonomous() {
     intake.move(20);
     intake2.move(-20);
     //turn 135 degrees
-    chassis.turnAngle(c*205);
+    chassis.turnAngle(c*202);
     pros::delay(100);
     profileController2.generatePath({
       Point{0_ft, 0_ft, 0_deg},
