@@ -18,7 +18,7 @@ using namespace okapi;
  std::vector<int> b = {};
  std::vector<int> c = {};
  std::vector<int> d = {};
-  bool blue=false;
+  bool red=false;
   bool front =false;
   bool skills=false;
  pros::Motor intake (4);
