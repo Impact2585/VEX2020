@@ -18,7 +18,7 @@ using namespace okapi;
  std::vector<int> b = {};
  std::vector<int> c = {};
  std::vector<int> d = {};
-  bool red=false;
+  bool red=true;
   bool front =false;
   bool skills=false;
  pros::Motor intake (4);
@@ -58,7 +58,7 @@ void autonomous() {
     }
   }
   else{
-    int c = 2*blue-1;
+    int c = 2*red-1;
     if(front){
         intake.move(126);
         intake2.move(-126);
