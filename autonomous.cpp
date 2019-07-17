@@ -108,6 +108,7 @@ void autonomous() {
       pros::Motor(9).move(-50);
     }
     else{
+      chassis.setMaxVelocity(200);
       intake.move(126);
       intake2.move(-126);
       profileController1.generatePath({
