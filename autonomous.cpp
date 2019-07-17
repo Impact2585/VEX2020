@@ -134,8 +134,11 @@ void autonomous() {
     profileController1.waitUntilSettled();
     //stopintake
     //turn 135 degrees
+    chassis.setMaxVelocity(100);
     chassis.turnAngle(c*199);
     pros::delay(100);
+     
+    chassis.setMaxVelocity(200);
     profileController2.generatePath({
       Point{0_ft, 0_ft, 0_deg},
       Point{2.0_ft, 0_ft, 0_deg}},
