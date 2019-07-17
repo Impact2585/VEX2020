@@ -133,8 +133,6 @@ void autonomous() {
     profileController1.setTarget("intake2");
     profileController1.waitUntilSettled();
     //stopintake
-    intake.move(20);
-    intake2.move(-20);
     //turn 135 degrees
     chassis.turnAngle(c*202);
     pros::delay(100);
@@ -144,8 +142,11 @@ void autonomous() {
       "scorezone" // Profile name
     );
     profileController2.setTarget("scorezone");
-
+   
     profileController2.waitUntilSettled();
+     
+    intake.move(0);
+    intake2.move(-0);
     pros::Motor(1).move(0);
     pros::Motor(2).move(0);
     pros::Motor(10).move(0);
