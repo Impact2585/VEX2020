@@ -19,8 +19,8 @@ using namespace okapi;
  std::vector<int> c = {};
  std::vector<int> d = {};
   bool blue=false;
-  bool front =true;
-  bool skills=true;
+  bool front =false;
+  bool skills=false;
  pros::Motor intake (4);
  pros::Motor intake2 (5);
  auto chassis = ChassisControllerFactory::create(
