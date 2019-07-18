@@ -120,7 +120,7 @@ void autonomous() {
     profileController1.setTarget("intake1");
       profileController1.waitUntilSettled();
       profileController2.generatePath({
-        Point{0_ft, c*-1.6_ft, 0_deg},
+        Point{0_ft, c*-1.1_ft, 0_deg},
         Point{1.9_ft, 0_ft, 0_deg}},
         "back1" // Profile name
       );
