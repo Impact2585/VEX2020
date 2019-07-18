@@ -120,8 +120,8 @@ void autonomous() {
     profileController1.setTarget("intake1");
       profileController1.waitUntilSettled();
       profileController2.generatePath({
-        Point{0_ft, c*1.1_ft, 0_deg},
-        Point{1.9_ft, 0_ft, 0_deg}},
+        Point{0_ft, c*-1.1_ft, 0_deg},
+        Point{2.5_ft, 0_ft, 0_deg}},
         "back1" // Profile name
       );
     profileController2.setTarget("back1",true);
@@ -136,7 +136,7 @@ void autonomous() {
     //stopintake
     //turn 135 degrees
     chassis.setMaxVelocity(100);
-    chassis.turnAngle(c*206);
+    chassis.turnAngle(c*225);
     pros::delay(100);
      
     chassis.setMaxVelocity(200);
