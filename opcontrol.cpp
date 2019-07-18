@@ -35,8 +35,8 @@ std::vector<int> outtake_motor_movement_log={};
 std::vector<int> intake_motor_movement_log={};
  
 //various numbers
-float SPEED_COEFFICIENT=126.0/127;
-float SPEED_FAST=126.0/127;
+float SPEED_COEFFICIENT=0.8;
+float SPEED_FAST=0.8;
 float SPEED_SLOW=0.4;
 int INTAKE_SPEED=126;
 int OUTTAKE_ENCODER_TICKS=5600;//???
