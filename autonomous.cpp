@@ -137,7 +137,7 @@ void autonomous() {
     //stopintake
     //turn 135 degrees
     chassis.setMaxVelocity(100);
-    chassis.turnAngle(c*210);
+    chassis.turnAngle(c*204);
     pros::delay(200);
      
     chassis.setMaxVelocity(200);
