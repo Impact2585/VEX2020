@@ -54,6 +54,7 @@ void autonomous() {
         pros::Motor(3).move(d[tick]);
         pros::Motor(11).move(-d[tick]);
         tick++;
+        pros::delay(10);
       }
     }
   }
