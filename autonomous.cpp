@@ -80,7 +80,7 @@ void autonomous() {
         );
       profileController2.setTarget("forward");
         profileController2.waitUntilSettled();
-      chassis.turnAngle(c*140);
+      chassis.turnAngle(c*-140);
       profileController2.generatePath({
         Point{0_ft, 0_ft, 0_deg},
         Point{1.1_ft, 0_ft, 0_deg}},
