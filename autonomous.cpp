@@ -137,7 +137,7 @@ void autonomous() {
     //turn 135 degrees
     chassis.setMaxVelocity(100);
     chassis.turnAngle(c*225);
-    pros::delay(100);
+    pros::delay(200);
      
     chassis.setMaxVelocity(200);
     profileController2.generatePath({
