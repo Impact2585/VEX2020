@@ -144,12 +144,10 @@ void stopIntake(){
 void moveOuttake(bool dir){
  if(dir){
   outtake.move(OUTTAKE_SPEED);
-  outtake_2.move(-OUTTAKE_SPEED);
   outtake_motor_movement_log.push_back(OUTTAKE_SPEED);
  }
  else{
   outtake.move(-OUTTAKE_SPEED);
-  outtake_2.move(OUTTAKE_SPEED);
   outtake_motor_movement_log.push_back(-OUTTAKE_SPEED);
  }
 }
