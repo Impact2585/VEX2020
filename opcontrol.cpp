@@ -5,15 +5,15 @@
  
 using namespace okapi;
  
-#define LEFT_WHEELS_PORT 1
-#define LEFT_WHEELS_PORT_2 2
-#define RIGHT_WHEELS_PORT 10
-#define RIGHT_WHEELS_PORT_2 9
-#define INTAKE_PORT_L 4
-#define INTAKE_PORT_R 5
-#define OUTTAKE_PORT 3
-#define OUTTAKE_PORT_2 11
-#define VISION_PORT 20
+#define LEFT_WHEELS_PORT 11
+#define LEFT_WHEELS_PORT_2 12
+#define RIGHT_WHEELS_PORT 20
+#define RIGHT_WHEELS_PORT_2 19
+#define INTAKE_PORT_L 14
+#define INTAKE_PORT_R 15
+#define OUTTAKE_PORT 13
+#define LIFT_PORT 16
+#define VISION_PORT 17
 //testing something
 bool profiling = false;
  
@@ -24,7 +24,7 @@ pros::Motor right_wheels (RIGHT_WHEELS_PORT, true);
 pros::Motor right_wheels_2 (RIGHT_WHEELS_PORT_2);
 pros::Motor intake_L (INTAKE_PORT_L);
 pros::Motor intake_R (INTAKE_PORT_R);
-pros::Motor outtake_2 (OUTTAKE_PORT_2,MOTOR_GEARSET_36, false, pros::E_MOTOR_ENCODER_COUNTS);
+pros::Motor lift (OUTTAKE_PORT_2,MOTOR_GEARSET_36, false, pros::E_MOTOR_ENCODER_COUNTS);
 pros::Motor outtake (OUTTAKE_PORT,MOTOR_GEARSET_36, false, pros::E_MOTOR_ENCODER_COUNTS);
 IntegratedEncoder enc = IntegratedEncoder(outtake);
  
@@ -41,6 +41,7 @@ float SPEED_SLOW=0.4;
 int INTAKE_SPEED=126;
 int OUTTAKE_ENCODER_TICKS=5600;//???
 int OUTTAKE_SPEED=126;//????
+int LIFT_SPEED=126;
  
 //color codes?
  
@@ -153,7 +154,6 @@ void moveOuttake(bool dir){
 }
 void stopOuttake(){
   outtake.move(0);
-  outtake_2.move(0);
   outtake_motor_movement_log.push_back(0);
 }
 void outtake_macro(bool state,long encStart){//false for reverse
@@ -161,7 +161,6 @@ void outtake_macro(bool state,long encStart){//false for reverse
   if(state==1){
     if(enc.get()-encStart<OUTTAKE_ENCODER_TICKS){
       outtake.move(OUTTAKE_SPEED);
-      outtake_2.move(-OUTTAKE_SPEED);
       outtake_motor_movement_log.push_back(OUTTAKE_SPEED);
     }
     else{
@@ -171,7 +170,6 @@ void outtake_macro(bool state,long encStart){//false for reverse
   if(state==0){
     if(enc.get()>0){
       outtake.move(-OUTTAKE_SPEED);
-      outtake_2.move(OUTTAKE_SPEED);
       outtake_motor_movement_log.push_back(-OUTTAKE_SPEED);
     }
     else{
@@ -185,20 +183,28 @@ void outtake_macro(bool dir){//false for reverse
   if(dir){
     while(enc.get()<=OUTTAKE_ENCODER_TICKS){
       outtake.move(OUTTAKE_SPEED);
-      outtake_2.move(-OUTTAKE_SPEED);
       outtake_motor_movement_log.push_back(OUTTAKE_SPEED);
     }
   }
   else{
     while(enc.get()>=-OUTTAKE_ENCODER_TICKS){
       outtake.move(-OUTTAKE_SPEED);
-      outtake_2.move(OUTTAKE_SPEED);
       outtake_motor_movement_log.push_back(-OUTTAKE_SPEED);
     }
   }
   outtake.move(0);
-  outtake_2.move(0);
   outtake_motor_movement_log.push_back(-OUTTAKE_SPEED);
+}
+void move_lift(bool dir){
+  if(dir){
+    lift.move(LIFT_SPEED);
+  }
+  else{
+    lift.move(-LIFT_SPEED);
+  }
+}
+void stop_lift(){
+  lift.move(0);
 }
 void opcontrol() {
   vis.set_signature(1, &THANOSCUBE);
@@ -265,6 +271,18 @@ void opcontrol() {
       stopIntake();
     }
     //OUTTAKE SYSTEM
+    if(master.get_digital(DIGITAL_X)){
+      //outtake_macro(true);
+      moveOuttake(true);//controlled outtake
+    }
+    else if(master.get_digital(DIGITAL_UP)){
+      //outtake_macro(true);
+      moveOuttake(false);
+    }
+    else{
+     stopOuttake();
+    }
+    //LIFT SYSTEM
     if(master.get_digital(DIGITAL_X)){
       //outtake_macro(true);
       moveOuttake(true);//controlled outtake
