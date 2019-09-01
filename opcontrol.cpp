@@ -5,14 +5,14 @@
  
 using namespace okapi;
  
-#define LEFT_WHEELS_PORT 11
-#define LEFT_WHEELS_PORT_2 12
-#define RIGHT_WHEELS_PORT 20
-#define RIGHT_WHEELS_PORT_2 19
-#define INTAKE_PORT_L 14
-#define INTAKE_PORT_R 15
-#define OUTTAKE_PORT 13
-#define LIFT_PORT 16
+#define LEFT_WHEELS_PORT 2
+#define LEFT_WHEELS_PORT_2 6
+#define RIGHT_WHEELS_PORT 5
+#define RIGHT_WHEELS_PORT_2 3
+#define INTAKE_PORT_L 8
+#define INTAKE_PORT_R 7
+#define OUTTAKE_PORT 20
+#define LIFT_PORT 9
 #define VISION_PORT 17
 //testing something
 bool profiling = false;
